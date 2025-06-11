@@ -21,15 +21,15 @@ if args.debug:
         DEBUG_MODE = True
 
 # type: "spans", "logs" or "metrics"
-def count_type(type, json_objects):
-    count = 0
+def get_telemetry_for_type(type, json_objects):
+    telem = []
     for item in json_objects:
         formatted_type = f"resource{type.capitalize()}"
 
         # Found a match. Increment counter
-        if formatted_type in item: count += 1
+        if formatted_type in item: telem.append(item)
 
-    return count
+    return telem
 
 def read_spec_rules():
     matching_files = glob.glob("spec/rules/*.md")
@@ -83,14 +83,15 @@ def start_program():
             # Only add to array if line starts and ends with curly braces
             if line.startswith("{") and line.endswith("}"): json_objects.append(line)
 
+        spans = get_telemetry_for_type(type="spans", json_objects=json_objects)
+        logs = get_telemetry_for_type(type="logs", json_objects=json_objects)
+        metrics = get_telemetry_for_type(type="metrics", json_objects=json_objects)
+
         if DEBUG_MODE:
-            logger.info(f"Read {len(json_objects)} valid objects from file...")
-            spans_count = count_type(type="spans", json_objects=json_objects)
-            logger.info(f"File has {spans_count} spans...")
-            logs_count = count_type(type="logs", json_objects=json_objects)
-            logger.info(f"File has {logs_count} logs...")
-            metrics_count = count_type(type="metrics", json_objects=json_objects)
-            logger.info(f"File has {metrics_count} metrics...")
+            logger.info(f"Read {len(json_objects)} valid objects from file...")    
+            logger.info(f"File has {len(spans)} spans...")
+            logger.info(f"File has {len(logs)} logs...")
+            logger.info(f"File has {len(metrics)} metrics...")
 
         all_rules, span_rules, log_rules, metric_rules, resource_rules, sdk_rules = read_spec_rules()
         
@@ -101,6 +102,8 @@ def start_program():
             logger.info(f"Metric rules: {len(metric_rules)}")
             logger.info(f"Resource rules: {len(resource_rules)}")
             logger.info(f"SDK rules: {len(sdk_rules)}")
+        
+        # For each signal
 
 
 if __name__ == "__main__":
