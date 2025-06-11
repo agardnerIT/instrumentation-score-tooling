@@ -6,6 +6,7 @@ from enums import *
 
 VERSION = "v0.0.1"
 DEBUG_MODE = False
+final_score = 0
 
 parser = argparse.ArgumentParser()
 
@@ -22,14 +23,14 @@ if args.debug:
 
 # type: "spans", "logs" or "metrics"
 def get_telemetry_for_type(type, json_objects):
-    telem = []
+    telemetry = []
     for item in json_objects:
         formatted_type = f"resource{type.capitalize()}"
 
         # Found a match. Increment counter
-        if formatted_type in item: telem.append(item)
+        if formatted_type in item: telemetry.append(item)
 
-    return telem
+    return telemetry
 
 def read_spec_rules():
     matching_files = glob.glob("spec/rules/*.md")
@@ -62,6 +63,13 @@ def read_spec_rules():
 
     return matching_files, span_rules, log_rules, metric_rules, resource_rules, sdk_rules
 
+# Question: How do we convert .md rules to runnable code?
+def evaluate_signals_against_rules(signals, rules):
+    score = 0 # TODO
+
+    logger.info(f"Evaluating {len(signals)} signals against {len(rules)} rules")
+    # Dummy logic TODO
+    return 1, 3, 0
 
 def start_program():
     with open(args.file, mode="r") as file:
@@ -103,7 +111,24 @@ def start_program():
             logger.info(f"Resource rules: {len(resource_rules)}")
             logger.info(f"SDK rules: {len(sdk_rules)}")
         
-        # For each signal
+        # THIS ENTIRE SECTION IS WIP / NOT READY. IGNORE!
+        # For each signal, evaluate the signal against all rules for that
+        # signal type
+        # Score_intermediate = min(100, 80 + P_p - N_m) - N_h
+        # Score_final = max(10, Score_intermediate)
+        # Where:
+        # P_p: Points from positive rules (good practices)
+        # N_m: Points from minor negative rules (Low, Normal, Important impact)
+        # N_h: Points from major negative rules (Very Important, Critical impact)
+        if DEBUG_MODE:
+            logger.warning("The following scores are DUMMY / WORK IN PROGRESS. DO NOT USE until this notice has been removed")
+
+            positive_points, negative_minor_points, negative_major_points = evaluate_signals_against_rules(logs, log_rules)
+            score_intermediate = min(Score.HIGHEST, 80+positive_points - negative_minor_points) - negative_major_points
+            score_final = max(Score.LOWEST, score_intermediate)
+            logger.info(f"Intermediate Score: {score_intermediate}")
+            logger.info(f"Final Score: {score_final}")
+        # END WIP / DUMMY SECTION. THIS IS NOT READY YET!
 
 
 if __name__ == "__main__":

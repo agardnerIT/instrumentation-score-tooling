@@ -1,5 +1,8 @@
-from enum import StrEnum
+from enum import StrEnum, IntEnum
 
+class Score(IntEnum):
+    LOWEST = 10
+    HIGHEST = 100
 class Target(StrEnum):
     LOG = "LOG"
     METRIC = "MET"
