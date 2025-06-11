@@ -9,5 +9,5 @@ cd instrumentation-score-tooling
 python -m venv .
 source bin/activate .
 pip install -r requirements.txt
-python app.py --file samples/all-signals.output
+python app.py --file samples/all-signals.output --debug true
 ```
