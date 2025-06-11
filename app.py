@@ -2,7 +2,7 @@ import json
 from loguru import logger
 import argparse
 import glob
-import fnmatch
+from enums import *
 
 VERSION = "v0.0.1"
 DEBUG_MODE = False
@@ -46,15 +46,15 @@ def read_spec_rules():
     for file in matching_files:
         if file.endswith("_template.md"): pos_to_remove = current_pos
         current_pos += 1
-        if "SPA" in file:
+        if Target.SPAN in file:
             span_rules.append(file)
-        elif "LOG" in file:
+        elif Target.LOG in file:
             log_rules.append(file)
-        elif "MET" in file:
+        elif Target.METRIC in file:
             metric_rules.append(file)
-        elif "RES" in file:
+        elif Target.RESOURCE in file:
             resource_rules.append(file)
-        elif "SDK" in file:
+        elif Target.SDK in file:
             sdk_rules.append(file)
     
     # Don't forget to remove _template.md
