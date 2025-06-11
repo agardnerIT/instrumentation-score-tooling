@@ -1,0 +1,16 @@
+receivers:
+  otlp:
+    grpc:
+      endpoint: "127.0.0.1:4317"
+    http:
+      endpoint: "127.0.0.1:4318"
+
+exporters:
+  file:
+    path: telemetry.output
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      exporters: [file]
